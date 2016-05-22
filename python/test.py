@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import broadcast
+import broadcast as bc
 
-broadcast.setup('192.168.95.255',50000)
-broadcast.send("Test")
+bc.send("test")
