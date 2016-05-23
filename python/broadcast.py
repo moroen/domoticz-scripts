@@ -39,3 +39,6 @@ def send(msg):
 if __name__ != "__main__":
 	# Imported
 	MYNET = get_broadcast_address()
+else:
+	MYNET = get_broadcast_address()
+	send(repr(time.time()))
