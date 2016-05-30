@@ -1,5 +1,5 @@
 import domoticz
-import broadcast as bc
+import udp as bc
 import away as a
 
 AwayDeviceName = "Away"

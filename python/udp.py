@@ -30,7 +30,9 @@ def setup(ip, port):
 	MYPORT = port
 
 # send
-def send(msg):
+def send(msg, verbose=False):
+	if verbose: 
+		print("Sending to " + MYNET + ":" + str(MYPORT))
 	s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 	s.bind(('', 0))
 	s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
