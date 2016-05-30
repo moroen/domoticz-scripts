@@ -2,7 +2,7 @@
 
 # Send UDP broadcast packets
 
-MYPORT = 50000 # Set some reasonable port
+MYPORT = 5000 # Set some reasonable port
 MYNET = '' # Must end with .255 (= broadcast)
 
 import sys, time
@@ -42,5 +42,7 @@ if __name__ != "__main__":
 	# Imported
 	MYNET = get_broadcast_address()
 else:
+	# Run from commandline
+	# Broadcast current timestamp on default address
 	MYNET = get_broadcast_address()
 	send(repr(time.time()))
