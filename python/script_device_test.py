@@ -4,5 +4,7 @@ import away as a
 
 AwayDeviceName = "Away"
 
-domoticz.log("Python: Device", changed_device_name)
+if 0:
+	domoticz.log("Python: Device", changed_device_name)
+	bc.send("Python - Device Changed: " + str(changed_device.id))		
 
