@@ -3,26 +3,36 @@
 import domoticz
 import udp as bc
 import away as a
+import time
 
+import conditional_triggers as ctrig
 
-def toggle(device_name):
-    dev = domoticz.devices[device_name]
-    domoticz.log("Python: Toggle - ", dev.name)
+triggers = {"$Kjøkken - Switch 1": "kjøkken - Tak", "$Kjøkken - Switch 2": "Kjøkken - Spot"}
 
-    domoticz.log("Python: Toggle current s_value: ", dev.s_value, " n_value: ", dev.n_value)
+dev = domoticz.changed_device
+
+if dev.name in triggers:
+    targetDev = domoticz.devices[triggers[dev.name]]
+    domoticz.log ("Python: Trigger: ", dev.name, " Target: ", targetDev.name)
+
+    if dev.n_value == 1:
+        ctrig.triggerOnTime[dev.name] = time.time()
+        domoticz.log("Python: Trigger '", dev.name, "' on: ", ctrig.triggerOnTime[dev.name])
     if dev.n_value == 0:
-        domoticz.command(name=device_name, action="On", file=__file__)
-    else:
-        domoticz.command(name=device_name, action="Off", file=__file__)
-    return None
+        offTime = time.time()
+        delta = offTime - ctrig.triggerOnTime[dev.name]
+        domoticz.log("Python: Trigger '", dev.name, "' off: ", offTime, "delta: ", delta)
 
-if 0:
-    domoticz.log("Python: Device", changed_device_name)
-    bc.send("Domoticz:DeviceChange:" + str(changed_device.id))
+        if delta >= ctrig.longClickDuration:
+            # Long click
+            domoticz.log("Python: Trigger '", dev.name, "' long click performed")
+            ctrig.toggleHighLow(targetDev)
+        else:
+            # Short click
+            domoticz.log("Python: Trigger '", dev.name, "' short click performed")
+            ctrig.toggle(targetDev)
+            #ctrig.toggleHighLow(targetDev)
 
-
-if domoticz.changed_device_name == "Test":
-    toggle(device_name="Test_Target")
 #
 # if (changed_device_name == "Test"):
 #     domoticz.log("Python: Device - Test changed")

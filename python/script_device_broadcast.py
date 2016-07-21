@@ -1,7 +1,7 @@
 import domoticz
 import udp as bc
 
-if 1:
+if 0:
     domoticz.log(
         "Python: Sending DeviceChange for device: ",
         changed_device_name)
