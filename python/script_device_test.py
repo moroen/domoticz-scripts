@@ -7,7 +7,9 @@ import time
 
 import conditional_triggers as ctrig
 
-triggers = {"$Kjøkken - Switch 1": "kjøkken - Tak", "$Kjøkken - Switch 2": "Kjøkken - Spot"}
+domoticz.log("Python: triggerValue: ", domoticz.user_variables["conditional_trigger"])
+
+triggers = {"$Kjøkken - Switch 1": "Kjøkken - Tak", "$Kjøkken - Switch 2": "Kjøkken - Spot"}
 
 dev = domoticz.changed_device
 
