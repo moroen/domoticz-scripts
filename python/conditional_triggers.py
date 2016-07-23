@@ -19,11 +19,28 @@ def toggle(targetDevice):
     return None
 
 
-def toggleHighLow(targetDevice, lowLevel=50, highLevel=100):
+def toggleHighLow(currentTrigger, targetDevice):
     targetLevel = int(targetDevice.s_value)
-    domoticz.log("Python: toggleHighLow - Target: ", targetDevice.name, " n_value: ", targetDevice.n_value, " s_value: ", targetDevice.s_value, "Level: ", targetLevel)
+    action = ""
 
-    if targetLevel < highLevel:
-        domoticz.command(name=targetDevice.name, action="Set Level "+str(highLevel), file=__file__)
+    if "Threshold" in currentTrigger:
+        threshold = currentTrigger["Threshold"]
     else:
-        domoticz.command(name=targetDevice.name, action="Set Level "+str(lowLevel), file=__file__)
+        threshold = currentTrigger["Low"]
+
+    domoticz.log("Python: toggleHighLow - Target: ", targetDevice.name,
+                 " n_value: ", targetDevice.n_value,
+                 " s_value: ", targetDevice.s_value,
+                 "Level: ", targetLevel,
+                 "LowLevel: ", lowLevel,
+                 "HighLevel: ", highLevel,
+                 "Threshold: ", threshold
+                 )
+
+    if targetLevel <= int(threshold):
+        action = "Set Level " + currentTrigger["High"]
+    else:
+        action = "Set Level " + currentTrigger["Low"]
+
+    domoticz.log("Action:", action)
+    domoticz.command(name=targetDevice.name, action=action, file=__file__)

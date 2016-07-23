@@ -1,21 +1,34 @@
 # -*- coding: utf-8 -*-
 
 import domoticz
-import udp as bc
-import away as a
 import time
 
 import conditional_triggers as ctrig
 
-domoticz.log("Python: triggerValue: ", domoticz.user_variables["conditional_trigger"])
+# Dict format: Trigger: Settings
+# Settings:
+#   Required parameters:
+#       Target: Name of actuator (dimmer)
+#       High: Level when switched to High (0-100)
+#       Low: Level when switched to low (0-100)
+#   Optional parameters:
+#       Threshold:  if current level less or equal to threhold, dimmer set to high
+#                   if current level more than threshold, dimmer set to low
+#                   default = lowLevel
 
-triggers = {"$Kjøkken - Switch 1": "Kjøkken - Tak", "$Kjøkken - Switch 2": "Kjøkken - Spot"}
+triggers = {
+            "$Kjøkken - Switch 1": {"Target": "Kjøkken - Tak"},
+            "$Kjøkken - Switch 2": {"Target": "Kjøkken - Spot", "High": "100", "Low": "35"},
+            "Test": {"Target": "Test_Target_Dimmer", "High": "100", "Low": "50", "Threshold": "7"}
+            }
 
+# Changed device
 dev = domoticz.changed_device
 
 if dev.name in triggers:
-    targetDev = domoticz.devices[triggers[dev.name]]
-    domoticz.log ("Python: Trigger: ", dev.name, " Target: ", targetDev.name)
+    currentTrigger = triggers[dev.name]
+    targetDev = domoticz.devices[currentTrigger["Target"]]
+    domoticz.log("Python: Trigger: ", dev.name, " Target: ", targetDev.name)
 
     if dev.n_value == 1:
         ctrig.triggerOnTime[dev.name] = time.time()
@@ -28,12 +41,12 @@ if dev.name in triggers:
         if delta >= ctrig.longClickDuration:
             # Long click
             domoticz.log("Python: Trigger '", dev.name, "' long click performed")
-            ctrig.toggleHighLow(targetDev)
+            ctrig.toggleHighLow(currentTrigger, targetDev)
         else:
             # Short click
             domoticz.log("Python: Trigger '", dev.name, "' short click performed")
             ctrig.toggle(targetDev)
-            #ctrig.toggleHighLow(targetDev)
+            # ctrig.toggleHighLow(targetDev)
 
 #
 # if (changed_device_name == "Test"):
