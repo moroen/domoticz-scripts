@@ -47,8 +47,3 @@ if dev.name in triggers:
             domoticz.log("Python: Trigger '", dev.name, "' short click performed")
             ctrig.toggle(targetDev)
             # ctrig.toggleHighLow(targetDev)
-
-#
-# if (changed_device_name == "Test"):
-#     domoticz.log("Python: Device - Test changed")
-#     domoticz.command(name="Test_Target", action="On", file=__file__)
