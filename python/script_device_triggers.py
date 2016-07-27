@@ -18,8 +18,7 @@ import conditional_triggers as ctrig
 
 triggers = {
             "$Kjøkken - Switch 1": {"Target": "Kjøkken - Tak"},
-            "$Kjøkken - Switch 2": {"Target": "Kjøkken - Spot", "High": "100", "Low": "35"},
-            "Test": {"Target": "Test_Target_Dimmer", "High": "100", "Low": "50", "Threshold": "7"}
+            "$Kjøkken - Switch 2": {"Target": "Kjøkken - Spot", "High": "100", "Low": "35"}
             }
 
 # Changed device
