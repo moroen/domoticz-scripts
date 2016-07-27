@@ -44,5 +44,5 @@ if triggerDev.name in sceneTriggers:
     for a in currentTrigger:
 
         if check_conditions(conditions=a["conditions"]):
-            # domoticz.command(name="Scene:" + a["scene"], action="On", file=__file__)
-            domoticz.log("Tjoho!")
+            domoticz.command(name="Scene:" + a["scene"], action="On", file=__file__)
+            
