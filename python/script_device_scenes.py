@@ -11,38 +11,62 @@ def check_conditions(conditions):
     res = True
 
     for a in conditions:
-        if "sensor" in a and "val" in a:
-            sensorDevice = domoticz.devices[a["sensor"]]
 
-            domoticz.log("Conditional scenes: sensor: ", sensorDevice.name, "s_value: ", sensorDevice.s_value, "n_value:", sensorDevice.n_value)
+        if "sensor" in a and "condition" in a:
+            sensorDevice = domoticz.devices[a["sensor"]]
+            # domoticz.log("Conditional scenes - sensor: ", sensorDevice.name, "s_value: ", sensorDevice.s_value, "n_value:", sensorDevice.n_value)
 
             if sensorDevice.switch_type == 0:
-                # On/Off Switch
-                res &= True if operators[a["val"]] == sensorDevice.n_value else False
+                # On/Off Switch - just check n_value
+                res &= True if operators[a["condition"]] == sensorDevice.n_value else False
             elif sensorDevice.switch_type == 7:
                 # MultiLevel
-                if "opr" in a:
-                    res &= operators[a["opr"]](int(sensorDevice.s_value), int(a["val"]))
+                if "condition" in a:
+                    if a["condition"] == "On":
+                        # N-value 1 (full on) or 2 (on, but dimmed)
+                        res &= True if sensorDevice.n_value > 0 else False
+                        #domoticz.log ("Condition On - n_value", sensorDevice.n_value, "res: ", res)
+                    elif a["condition"] == "Off":
+                        res &= True if sensorDevice.n_value == 0 else False
+                        #domoticz.log ("Condition Off - n_value", sensorDevice.n_value, "res: ", res)
+                    else:
+                        #domoticz.log ("Condition expression:")
+                        res &= operators[a["condition"]](int(sensorDevice.s_value), int(a["val"]))
                 else:
-                    domoticz.log("Condtional scenes: Missing required key (opr)")
+                    domoticz.log("Condtional scenes: Missing required key (condition)")
                     res = False
         else:
-            domoticz.log("Conditional scenes: Missing required keys (sensor, val)")
+            domoticz.log("Conditional scenes: Missing required keys (sensor, condition)")
             res = False
 
+    # domoticz.log("Conditional scenes - Condition: ", conditions, " res: ", res)
     return res
 
 # Define triggers
 # Due to using impulse-triggers, only execute scene when the trigger is Off
 
-sceneTriggers = {"$Ute - Platting - Switch 1": [
-    {"scene": "Stue - Dempet",
-        "conditions": [{"sensor": "$Ute - Platting - Switch 1", "val": "Off"}, {"sensor": "Stue 2 - Tak", "opr": "ge", "val": 50}]},
-    {"scene": "Stue - Av",
-        "conditions": [{"sensor": "$Ute - Platting - Switch 1", "val": "Off"}, {"sensor": "Stue 2 - Tak", "opr": "le", "val": 50}]}
-]}
+sceneTriggers = {"$Ute - Platting - Switch 1":
+                 [
+                     {
+                         "scene": "Stue - Dempet",
+                         "conditions": [{"sensor": "$Ute - Platting - Switch 1", "condition": "Off"},
+                                        {"sensor": "Stue 2 - Tak", "condition": "ge", "val": 50},
+                                        {"sensor": "Stue 2 - Tak", "condition": "On"}
+                                        ]
+                     },
+                     {
+                         "scene": "Stue - Av",
+                         "conditions": [{"sensor": "$Ute - Platting - Switch 1", "condition": "Off"},
+                                        {"sensor": "Stue 2 - Tak", "condition": "le", "val": 50}, {"sensor": "Stue 2 - Tak", "condition": "On"}]
+                     },
+                     {
+                         "scene": "Stue - Kveld",
+                         "conditions": [{"sensor": "$Ute - Platting - Switch 1", "condition": "Off"},
+                                        {"sensor": "Stue 2 - Tak", "condition": "Off"}]
+                     }
+                 ]
+                 }
 
-print sceneTriggers
 
 triggerDev = domoticz.changed_device
 
@@ -51,4 +75,6 @@ if triggerDev.name in sceneTriggers:
     for a in currentTrigger:
 
         if check_conditions(conditions=a["conditions"]):
+            domoticz.log("Conditional scenes: Activating scene ", a["scene"])
             domoticz.command(name="Scene:" + a["scene"], action="On", file=__file__)
+            break
