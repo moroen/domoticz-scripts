@@ -45,24 +45,21 @@ def check_conditions(conditions):
 # Define triggers
 # Due to using impulse-triggers, only execute scene when the trigger is Off
 
-sceneTriggers = {"$Ute - Platting - Switch 1":
+sceneTriggers = {"$Stue - Spot - Click":
                  [
                      {
                          "scene": "Stue - Dempet",
-                         "conditions": [{"sensor": "$Ute - Platting - Switch 1", "condition": "Off"},
-                                        {"sensor": "Stue 2 - Tak", "condition": "ge", "val": 50},
+                         "conditions": [{"sensor": "Stue 2 - Tak", "condition": "ge", "val": 50},
                                         {"sensor": "Stue 2 - Tak", "condition": "On"}
                                         ]
                      },
                      {
-                         "scene": "Stue - Av",
-                         "conditions": [{"sensor": "$Ute - Platting - Switch 1", "condition": "Off"},
-                                        {"sensor": "Stue 2 - Tak", "condition": "le", "val": 50}, {"sensor": "Stue 2 - Tak", "condition": "On"}]
+                         "group": "Stue", "action": "Off",
+                         "conditions": [{"sensor": "Stue 2 - Tak", "condition": "le", "val": 50}, {"sensor": "Stue 2 - Tak", "condition": "On"}]
                      },
                      {
                          "scene": "Stue - Kveld",
-                         "conditions": [{"sensor": "$Ute - Platting - Switch 1", "condition": "Off"},
-                                        {"sensor": "Stue 2 - Tak", "condition": "Off"}]
+                         "conditions": [{"sensor": "Stue 2 - Tak", "condition": "Off"}]
                      }
                  ]
                  }
@@ -73,8 +70,12 @@ triggerDev = domoticz.changed_device
 if triggerDev.name in sceneTriggers:
     currentTrigger = sceneTriggers[triggerDev.name]
     for a in currentTrigger:
-
         if check_conditions(conditions=a["conditions"]):
-            domoticz.log("Conditional scenes: Activating scene ", a["scene"])
-            domoticz.command(name="Scene:" + a["scene"], action="On", file=__file__)
-            break
+            if "scene" in a:
+                domoticz.log("Conditional scenes: Activating scene ", a["scene"])
+                domoticz.command(name="Scene:" + a["scene"], action="On", file=__file__)
+                break
+            elif "group" in a:
+                domoticz.log("Conditional scenes: Group ", a["group"], " ", a["action"])
+                domoticz.command(name="Group:" + a["group"], action=a["action"], file=__file__)
+                break
