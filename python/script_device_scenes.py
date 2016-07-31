@@ -14,7 +14,7 @@ def check_conditions(conditions):
 
         if "sensor" in a and "condition" in a:
             sensorDevice = domoticz.devices[a["sensor"]]
-            # domoticz.log("Conditional scenes - sensor: ", sensorDevice.name, "s_value: ", sensorDevice.s_value, "n_value:", sensorDevice.n_value)
+            # domoticz.log("Conditional scenes - sensor: ", sensorDevice.name, "s_value: ", sensorDevice.s_value, "n_value:", sensorDevice.n_value, "switch-type: ", sensorDevice.switch_type)
 
             if sensorDevice.switch_type == 0:
                 # On/Off Switch - just check n_value
@@ -30,7 +30,6 @@ def check_conditions(conditions):
                         res &= True if sensorDevice.n_value == 0 else False
                         #domoticz.log ("Condition Off - n_value", sensorDevice.n_value, "res: ", res)
                     else:
-                        #domoticz.log ("Condition expression:")
                         res &= operators[a["condition"]](int(sensorDevice.s_value), int(a["val"]))
                 else:
                     domoticz.log("Condtional scenes: Missing required key (condition)")
@@ -61,6 +60,17 @@ sceneTriggers = {"$Stue - Spot - Click":
                          "scene": "Stue - Kveld",
                          "conditions": [{"sensor": "Stue 2 - Tak", "condition": "Off"}]
                      }
+                 ],
+                 "$Gang - Trapp - SingleClick":
+                     [
+                         {
+                             "scene": "Natt",
+                             "conditions": [{"sensor": "Gang - Trapp", "condition": "On"}]
+                         },
+                         {
+                             "scene": "Ettermiddag",
+                             "conditions": [{"sensor": "Gang - Trapp", "condition": "Off"}]
+                         }
                  ]
                  }
 
@@ -69,6 +79,7 @@ triggerDev = domoticz.changed_device
 
 if triggerDev.name in sceneTriggers:
     currentTrigger = sceneTriggers[triggerDev.name]
+    # domoticz.log("Conditional scenes: - ", triggerDev.name)
     for a in currentTrigger:
         if check_conditions(conditions=a["conditions"]):
             if "scene" in a:
