@@ -17,7 +17,7 @@ import conditional_triggers as ctrig
 #                   default = lowLevel
 
 triggers = {
-            "$Kjøkken - Switch 1": {"Target": "Kjøkken - Tak"},
+            "$Kjøkken - Switch 1": {"Target": "Kjøkken - Tak", "High": "100", "Low": "50"},
             "$Kjøkken - Switch 2": {"Target": "Kjøkken - Spot", "High": "100", "Low": "35"}
             }
 

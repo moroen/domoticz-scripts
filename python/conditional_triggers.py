@@ -32,8 +32,8 @@ def toggleHighLow(currentTrigger, targetDevice):
                  " n_value: ", targetDevice.n_value,
                  " s_value: ", targetDevice.s_value,
                  "Level: ", targetLevel,
-                 "LowLevel: ", lowLevel,
-                 "HighLevel: ", highLevel,
+                 "LowLevel: ", currentTrigger["Low"],
+                 "HighLevel: ", currentTrigger["High"],
                  "Threshold: ", threshold
                  )
 
