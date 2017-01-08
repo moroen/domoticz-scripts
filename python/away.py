@@ -9,28 +9,34 @@
 # Author: moroen@gmail.com
 #
 
-import urllib2
+import urllib.request as urllib2
 import base64
 import sys
 import json
 
-domoticzserver = "127.0.0.1:8080"
+domoticzserver = "zwave:8080"
 domoticzusername = ""
 domoticzpassword = ""
 awayDeviceName = "Away"
-base64string = base64.encodestring('%s:%s' % (
-    domoticzusername, domoticzpassword)).replace('\n', '')
 
+base64string = base64.encodestring(bytes(('%s:%s' % (domoticzusername, domoticzpassword)).replace('\n', ''), 'utf-8'))
 
-def DomoticzRequest(url):
+def DomoticzRequest(params):
+    global domoticzserver
+
+    url = "http://{0}/json.htm?{1}".format(domoticzserver, params)
+
+    print (url)
+
     request = urllib2.Request(url)
     request.add_header("Authorization", "Basic %s" % base64string)
     try:
         response = urllib2.urlopen(request)
-        return response.read()
+        return json.loads(response.read().decode('utf-8'))
+
     except urllib2.URLError:
         print ("Error - Couldn't open URL")
-        quit()
+        return None
 
 
 def DomoticzTimer(idx, status):
@@ -39,16 +45,13 @@ def DomoticzTimer(idx, status):
     else:
         cmd = "disablescenetimer"
 
-    url = "http://" + domoticzserver + "/json.htm?type=command&param=" + \
-        cmd + "&idx=" + str(idx)
-    DomoticzRequest(url)
+    param = "type=command&param=" + cmd + "&idx=" + str(idx)
+    DomoticzRequest(param)
 
 
 def setAway(away):
-    url = "http://" + domoticzserver + "/json.htm?type=schedules&filter=scene"
-    data = json.loads(DomoticzRequest(url))
-
-    print (url)
+    param = "type=schedules&filter=scene"
+    data = DomoticzRequest(param)
 
     for k in data["result"]:
         # print str(k["TimerID"]) + ": " + k["DevName"]
