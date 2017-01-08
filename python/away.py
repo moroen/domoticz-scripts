@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Domoticz Pyhton script for enabling/disabling timers based on Away-status
 #
