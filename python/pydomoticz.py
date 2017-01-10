@@ -6,12 +6,13 @@ import json
 
 import urllib.request as urllib2
 import collections
+import argparse
 
 # import kivy.config as config
 
 # from kivy.config import ConfigParser
 
-domoticzserver = "zwave:8080"
+domoticzserver = "127.0.0.1:8080"
 domoticzusername = ""
 domoticzpassword = ""
 awayDeviceName = "Away"
@@ -19,9 +20,24 @@ base64string = base64.encodestring(bytes(('%s:%s' % (domoticzusername, domoticzp
 
 currentScenes = {}
 
+def defultArgs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--host", "-s", "--server", default="127.0.0.1")
+    parser.add_argument("--port", default="8080")
+
+    return parser
+
 def getServerInfo():
     global domoticzserver
     return domoticzserver
+
+def setServerFromArgs(args):
+    global domoticzserver
+    domoticzserver = "{0}:{1}".format(args.host, args.port)
+
+def setServer(host, port):
+    global domoticzserver
+    domoticzserver = "{0}:{1}".format(host, port)
 
 def DomoticzRequest(params):
     global domoticzserver
@@ -55,7 +71,7 @@ def getScenesFromServer():
     else:
         currentScenes = None
 
-def switchDevice(idx, value):
+def setDevice(idx, value):
     param = "type=command&param=switchlight&idx={0}&switchcmd={1}".format(idx, value)
     res = DomoticzRequest(param)
 
@@ -63,14 +79,15 @@ def toggleDevice(idx):
     """Toggle the device"""
     dev = getDevice(idx)
     if dev["Status"] == "Off":
-        switchDevice(idx, "On")
+        setDevice(idx, "On")
     else:
-        switchDevice(idx, "Off")
+        setDevice(idx, "Off")
 
 def activateScene(idx):
     param = "type=command&param=switchscene&idx={0}&switchcmd=On".format(idx)
     res = DomoticzRequest(param)
 
+# Devices
 def getDevice(idx):
     params = "type=devices&rid={0}".format(idx)
     res = DomoticzRequest(params)
