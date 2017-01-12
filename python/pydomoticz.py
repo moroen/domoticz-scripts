@@ -102,6 +102,8 @@ def getScenes(type="Scene", forceReload=False):
     if currentScenes:
         return sorted([aScene for aScene in currentScenes if aScene['Type']==type], key=lambda scene: scene['Name'])
 
+# Variables
+
 if __name__ == '__main__':
     print ("pydomoticz standalone")
     print (sys.version)
