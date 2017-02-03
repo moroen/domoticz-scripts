@@ -8,6 +8,9 @@ import urllib.request as urllib2
 import collections
 import argparse
 
+from urllib.parse import quote
+
+
 # import kivy.config as config
 
 # from kivy.config import ConfigParser
@@ -75,6 +78,10 @@ def setDevice(idx, value):
     param = "type=command&param=switchlight&idx={0}&switchcmd={1}".format(idx, value)
     res = DomoticzRequest(param)
 
+def setDeviceLevel(idx, level):
+    param = "type=command&param=switchlight&idx={0}&switchcmd=Set%20Level&level={1}".format(idx, level)
+    res = DomoticzRequest(param)
+
 def toggleDevice(idx):
     """Toggle the device"""
     dev = getDevice(idx)
@@ -103,6 +110,17 @@ def getScenes(type="Scene", forceReload=False):
         return sorted([aScene for aScene in currentScenes if aScene['Type']==type], key=lambda scene: scene['Name'])
 
 # Variables
+
+def setVariable(name, value):
+
+    param = "type=command&param=updateuservariable&vname={0}&vtype=2&vvalue={1}".format(quote(name), quote(value))
+    res = DomoticzRequest(param)
+
+    if res['status'] == "ERR":
+        param = "type=command&param=saveuservariable&vname={0}&vtype=2&vvalue={1}".format(quote(name), quote(value))
+        res = DomoticzRequest(param)
+
+    return res
 
 if __name__ == '__main__':
     print ("pydomoticz standalone")
