@@ -18,6 +18,8 @@ parser.add_argument('idx')
 
 args = parser.parse_args()
 
+pydomoticz.setServerFromArgs(args)
+
 targetDevice = pydomoticz.getDevice(args.idx)
 
 with shelve.open('triggers') as db:
@@ -50,5 +52,8 @@ with shelve.open('triggers') as db:
                 pydomoticz.toggleDevice(args.idx)
 
     elif args.state == "Setup":
-        print(targetDevice['Name'])
-        pydomoticz.setVariable("{0}_high".format(targetDevice['Name']), "99")
+        # print(targetDevice['Name'])
+        # pydomoticz.setVariable("{0}_high".format(targetDevice['Name']), "99")
+        valueHigh = pydomoticz.getVariable("{0}_high".format(targetDevice['Name']), 99, True)
+        valueLow = pydomoticz.getVariable("{0}_low".format(targetDevice['Name']), 50, True)
+        #print (value)

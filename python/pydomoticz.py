@@ -113,6 +113,8 @@ def getScenes(type="Scene", forceReload=False):
 
 def setVariable(name, value):
 
+    value = str(value)
+
     param = "type=command&param=updateuservariable&vname={0}&vtype=2&vvalue={1}".format(quote(name), quote(value))
     res = DomoticzRequest(param)
 
@@ -121,6 +123,23 @@ def setVariable(name, value):
         res = DomoticzRequest(param)
 
     return res
+
+def getVariable(name, defaultValue = None, Create = False):
+    param = "type=command&param=getuservariables"
+    res = DomoticzRequest(param)
+
+    if res['status'] == "OK":
+        for aRes in res['result']:
+            if aRes['Name'] == name:
+                return aRes['Value']
+
+    # Not found
+    if defaultValue != None:
+        if Create:
+            setVariable(name, defaultValue)
+        return defaultValue
+
+    return None
 
 if __name__ == '__main__':
     print ("pydomoticz standalone")
