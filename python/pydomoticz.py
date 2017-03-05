@@ -11,6 +11,8 @@ import argparse
 from urllib.parse import quote
 
 
+isVerbose = False
+
 # import kivy.config as config
 
 # from kivy.config import ConfigParser
@@ -23,7 +25,7 @@ base64string = base64.encodestring(bytes(('%s:%s' % (domoticzusername, domoticzp
 
 currentScenes = {}
 
-def defultArgs():
+def defaultArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", "-s", "--server", default="127.0.0.1")
     parser.add_argument("--port", default="8080")
@@ -47,7 +49,8 @@ def DomoticzRequest(params):
 
     url = "http://{0}/json.htm?{1}".format(domoticzserver, params)
 
-    print (url)
+    if isVerbose:
+        print (url)
 
     request = urllib2.Request(url)
     request.add_header("Authorization", "Basic %s" % base64string)

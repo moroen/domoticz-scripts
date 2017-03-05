@@ -9,20 +9,31 @@ def setDevice(args):
 def toggleDevice(args):
     pydomoticz.toggleDevice(args.idx)
 
-parser = pydomoticz.defultArgs()
+parser = pydomoticz.defaultArgs()
 
-subparsers = parser.add_subparsers(dest="command")
-subparsers.required = True
+parser.add_argument("idx", help="Device ID")
+parser.add_argument("command", choices=["On", "Off", "Toggle", "High", "Low"], help="Command")
 
-parser_set = subparsers.add_parser("set")
-parser_set.add_argument("idx")
-parser_set.add_argument("command", choices=["On", "Off"])
-parser_set.set_defaults(func = setDevice)
+parser.add_argument("-v", "--verbose", action="store_true", help="Increase output verbosity")
+parser.add_argument("--level", nargs=1, help="Level for On, High, Low")
 
-parser_toggle = subparsers.add_parser("toggle")
-parser_toggle.add_argument("idx")
-parser_toggle.set_defaults(func = toggleDevice)
 
 args = parser.parse_args()
 pydomoticz.setServerFromArgs(args)
-args.func(args)
+
+if args.verbose:
+    pydomoticz.isVerbose=True
+    print(args.idx, args.command)
+
+if args.command == "On":
+    if args.level:
+        print ("Level: ", args.level[0])
+        pydomoticz.setDeviceLevel(args.idx, args.level[0])
+    else:
+        pydomoticz.setDevice(args.idx, "On")
+
+elif args.command == "Off":
+    pydomoticz.setDevice(args.idx, "Off")
+
+elif args.command == "Toggle":
+    pydomoticz.toggleDevice(args.idx)
