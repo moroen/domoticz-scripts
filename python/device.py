@@ -9,6 +9,18 @@ def setDevice(args):
 def toggleDevice(args):
     pydomoticz.toggleDevice(args.idx)
 
+def setDeviceHighOrLow(args):
+    if args.level:
+        dev = pydomoticz.getDevice(args.idx)
+        valName = "{0}_{1}".format(dev["Name"], args.command)
+
+        pydomoticz.setVariable(valName, args.level[0])
+
+    if args.command == "High":
+        pydomoticz.setDeviceToHigh(args.idx)
+    else:
+        pydomoticz.setDeviceToLow(args.idx)
+
 parser = pydomoticz.defaultArgs()
 
 parser.add_argument("idx", help="Device ID")
@@ -37,3 +49,6 @@ elif args.command == "Off":
 
 elif args.command == "Toggle":
     pydomoticz.toggleDevice(args.idx)
+
+elif args.command == "High" or args.command == "Low":
+    setDeviceHighOrLow(args)

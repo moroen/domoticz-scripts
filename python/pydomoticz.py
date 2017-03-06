@@ -77,6 +77,12 @@ def getScenesFromServer():
     else:
         currentScenes = None
 
+# Devices
+def getDevice(idx):
+    params = "type=devices&rid={0}".format(idx)
+    res = DomoticzRequest(params)
+    return res["result"][0]
+
 def setDevice(idx, value):
     param = "type=command&param=switchlight&idx={0}&switchcmd={1}".format(idx, value)
     res = DomoticzRequest(param)
@@ -93,15 +99,23 @@ def toggleDevice(idx):
     else:
         setDevice(idx, "Off")
 
+def setDeviceToHigh(idx):
+    dev = getDevice(idx)
+    valName = "{0}_High".format(dev["Name"])
+    val = getVariable(valName, 90)
+    setDeviceLevel(idx, val)
+
+def setDeviceToLow(idx):
+    dev = getDevice(idx)
+    valName = "{0}_Low".format(dev["Name"])
+    val = getVariable(valName, 90)
+    setDeviceLevel(idx, val)
+
+# Scenes
 def activateScene(idx):
     param = "type=command&param=switchscene&idx={0}&switchcmd=On".format(idx)
     res = DomoticzRequest(param)
 
-# Devices
-def getDevice(idx):
-    params = "type=devices&rid={0}".format(idx)
-    res = DomoticzRequest(params)
-    return res["result"][0]
 
 def getScenes(type="Scene", forceReload=False):
     global currentScenes
