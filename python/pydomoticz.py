@@ -13,10 +13,6 @@ from urllib.parse import quote
 
 isVerbose = False
 
-# import kivy.config as config
-
-# from kivy.config import ConfigParser
-
 domoticzserver = "127.0.0.1:8080"
 domoticzusername = ""
 domoticzpassword = ""
@@ -178,7 +174,7 @@ def getVariable(name, defaultValue = None, Create = False):
     return None
 
 if __name__ == '__main__':
-    print ("pydomoticz standalone")
+    print ("Pydomoticz v0.1")
     print (sys.version)
 
     #data = getScenes()
@@ -188,5 +184,4 @@ if __name__ == '__main__':
     print (dev["Name"])
 
 else:
-    print ("pydomoticz module")
     domoticzserver = getServerInfo()
