@@ -23,8 +23,9 @@ def setDeviceHighOrLow(args):
 
 parser = pydomoticz.defaultArgs()
 
+
+parser.add_argument("command", choices=["On", "Off", "Toggle", "High", "Low", "ToggleHighLow"], help="Command")
 parser.add_argument("idx", help="Device ID")
-parser.add_argument("command", choices=["On", "Off", "Toggle", "High", "Low"], help="Command")
 
 parser.add_argument("-v", "--verbose", action="store_true", help="Increase output verbosity")
 parser.add_argument("--level", nargs=1, help="Level for On, High, Low")
@@ -52,3 +53,6 @@ elif args.command == "Toggle":
 
 elif args.command == "High" or args.command == "Low":
     setDeviceHighOrLow(args)
+
+elif args.command == "ToggleHighLow":
+    pydomoticz.toggleDeviceHighLow(args.idx)

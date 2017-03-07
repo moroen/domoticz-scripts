@@ -111,6 +111,25 @@ def setDeviceToLow(idx):
     val = getVariable(valName, 90)
     setDeviceLevel(idx, val)
 
+def toggleDeviceHighLow(idx):
+    dev = getDevice(idx)
+    lowLevel = int(getVariable("{0}_Low".format(dev["Name"]), 50))
+    highLevel = int(getVariable("{0}_High".format(dev["Name"]), 50))
+    currentLevel = int(dev["LevelInt"])+1
+
+    if currentLevel < lowLevel:
+        targetLevel = lowLevel
+    elif currentLevel >= lowLevel and currentLevel < highLevel:
+        targetLevel = highLevel
+    elif currentLevel >= highLevel:
+        targetLevel = lowLevel
+
+    if isVerbose:
+        print("Current: ", currentLevel, "low: ", lowLevel, "High: ", highLevel)
+        print("Setting to: ", targetLevel)
+
+    setDeviceLevel(idx=idx, level=targetLevel)
+
 # Scenes
 def activateScene(idx):
     param = "type=command&param=switchscene&idx={0}&switchcmd=On".format(idx)

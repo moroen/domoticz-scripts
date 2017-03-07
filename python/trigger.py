@@ -8,17 +8,20 @@ import argparse
 
 longClickDuration = 2
 
-parser = pydomoticz.defultArgs()
+parser = pydomoticz.defaultArgs()
 
 class triggerInfo():
     pass
 
-parser.add_argument('state', choices=['On', 'Off', 'Setup'])
+parser.add_argument('state', choices=['On', 'Off'])
 parser.add_argument('idx')
+parser.add_argument("-v", "--verbose", action="store_true", help="Increase output verbosity")
 
 args = parser.parse_args()
-
 pydomoticz.setServerFromArgs(args)
+
+if args.verbose:
+    pydomoticz.isVerbose=True
 
 targetDevice = pydomoticz.getDevice(args.idx)
 
@@ -28,7 +31,9 @@ with shelve.open('triggers') as db:
 
     if args.state == "On":
         tm = time.time()
-        print("Setting to: {0}".format(tm))
+
+        if pydomoticz.isVerbose:
+            print("Setting to: {0}".format(tm))
 
         if args.idx in db:
             n = db[args.idx]
@@ -45,15 +50,10 @@ with shelve.open('triggers') as db:
             delta = offTime - n.time
 
             if delta > longClickDuration:
-                print("longer")
-                pydomoticz.setDeviceLevel(args.idx, 10)
+                if pydomoticz.isVerbose:
+                    print("Long Click")
+                pydomoticz.toggleDeviceHighLow(args.idx)
             else:
-                print("Shorter")
+                if pydomoticz.isVerbose:
+                    print("Short Click")
                 pydomoticz.toggleDevice(args.idx)
-
-    elif args.state == "Setup":
-        # print(targetDevice['Name'])
-        # pydomoticz.setVariable("{0}_high".format(targetDevice['Name']), "99")
-        valueHigh = pydomoticz.getVariable("{0}_high".format(targetDevice['Name']), 99, True)
-        valueLow = pydomoticz.getVariable("{0}_low".format(targetDevice['Name']), 50, True)
-        #print (value)
