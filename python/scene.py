@@ -3,7 +3,7 @@
 import pydomoticz
 import argparse
 
-parser = pydomoticz.defultArgs()
+parser = pydomoticz.defaultArgs()
 
 def scenes(args):
     print (args.command)
