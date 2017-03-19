@@ -79,6 +79,10 @@ def getDevice(idx):
     res = DomoticzRequest(params)
     return res["result"][0]
 
+def getAllDevices(filter=None):
+    pass
+
+# Device functions
 def setDevice(idx, value):
     param = "type=command&param=switchlight&idx={0}&switchcmd={1}".format(idx, value)
     res = DomoticzRequest(param)
@@ -126,7 +130,7 @@ def toggleDeviceHighLow(idx):
 
     setDeviceLevel(idx=idx, level=targetLevel)
 
-# Scenes
+# Scenes functions
 def activateScene(idx):
     param = "type=command&param=switchscene&idx={0}&switchcmd=On".format(idx)
     res = DomoticzRequest(param)
