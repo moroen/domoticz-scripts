@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import domoticz
+import DomoticzEvents as DE
 import operator
 
 operators = {"eg": operator.eq, "lt": operator.lt, "gt": operator.gt,
@@ -13,7 +13,7 @@ def check_conditions(conditions):
     for a in conditions:
 
         if "sensor" in a and "condition" in a:
-            sensorDevice = domoticz.devices[a["sensor"]]
+            sensorDevice = DE.Devices[a["sensor"]]
             # domoticz.log("Conditional scenes - sensor: ", sensorDevice.name, "s_value: ", sensorDevice.s_value, "n_value:", sensorDevice.n_value, "switch-type: ", sensorDevice.switch_type)
 
             if sensorDevice.switch_type == 0:
@@ -32,10 +32,10 @@ def check_conditions(conditions):
                     else:
                         res &= operators[a["condition"]](int(sensorDevice.s_value), int(a["val"]))
                 else:
-                    domoticz.log("Condtional scenes: Missing required key (condition)")
+                    DE.Log("Condtional scenes: Missing required key (condition)")
                     res = False
         else:
-            domoticz.log("Conditional scenes: Missing required keys (sensor, condition)")
+            DE.Log("Conditional scenes: Missing required keys (sensor, condition)")
             res = False
 
     # domoticz.log("Conditional scenes - Condition: ", conditions, " res: ", res)
@@ -75,7 +75,7 @@ sceneTriggers = {"$Stue - Spot - Click":
                  }
 
 
-triggerDev = domoticz.changed_device
+triggerDev = DE.changed_device
 
 if triggerDev.name in sceneTriggers:
     currentTrigger = sceneTriggers[triggerDev.name]
@@ -83,10 +83,10 @@ if triggerDev.name in sceneTriggers:
     for a in currentTrigger:
         if check_conditions(conditions=a["conditions"]):
             if "scene" in a:
-                domoticz.log("Conditional scenes: Activating scene ", a["scene"])
-                domoticz.command(name="Scene:" + a["scene"], action="On", file=__file__)
+                DE.Log("Conditional scenes: Activating scene " + a["scene"])
+                DE.Command("Scene:" + a["scene"], "On")
                 break
             elif "group" in a:
-                domoticz.log("Conditional scenes: Group ", a["group"], " ", a["action"])
-                domoticz.command(name="Group:" + a["group"], action=a["action"], file=__file__)
+                DE.Log("Conditional scenes: Group " + a["group"] + " " + a["action"])
+                DE.Command("Group:" + a["group"], a["action"])
                 break
